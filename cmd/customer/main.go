@@ -22,5 +22,5 @@ func main() {
 		return
 	}
 
-	logger.Log.Info("Server Customer")
+	logger.Log.Info("RUN CUSTOMER-SERVICE!")
 }

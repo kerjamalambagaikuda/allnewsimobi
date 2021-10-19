@@ -15,6 +15,7 @@ var testQueries *sqlc.Queries
 var testDB *sql.DB
 
 func TestMain(m *testing.M) {
+
 	// Load Config
 	config, err := utilConfig.LoadConfig("../")
 	if err != nil {
