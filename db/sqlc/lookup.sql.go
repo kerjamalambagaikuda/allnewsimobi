@@ -70,6 +70,27 @@ func (q *Queries) GetLookupById(ctx context.Context, id int64) (Lookup, error) {
 	return i, err
 }
 
+const getLookupByIdForUpdate = `-- name: GetLookupByIdForUpdate :one
+SELECT id, type, code, name, priority, description, shortname, status, filter FROM lookup WHERE id = ? LIMIT 1 FOR UPDATE
+`
+
+func (q *Queries) GetLookupByIdForUpdate(ctx context.Context, id int64) (Lookup, error) {
+	row := q.db.QueryRowContext(ctx, getLookupByIdForUpdate, id)
+	var i Lookup
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Code,
+		&i.Name,
+		&i.Priority,
+		&i.Description,
+		&i.Shortname,
+		&i.Status,
+		&i.Filter,
+	)
+	return i, err
+}
+
 const listLookup = `-- name: ListLookup :many
 SELECT id, type, code, name, priority, description, shortname, status, filter FROM lookup ORDER BY id
 `
@@ -80,7 +101,7 @@ func (q *Queries) ListLookup(ctx context.Context) ([]Lookup, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Lookup
+	items := []Lookup{}
 	for rows.Next() {
 		var i Lookup
 		if err := rows.Scan(

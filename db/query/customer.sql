@@ -8,6 +8,9 @@ INSERT INTO customer (
 -- name: GetCustomerById :one
 SELECT * FROM customer WHERE id = ? LIMIT 1;
 
+-- name: GetCustomerByIdForUpdate :one
+SELECT * FROM customer WHERE id = ? LIMIT 1 FOR UPDATE;
+
 -- name: ListCustomer :many
 SELECT * FROM customer ORDER BY id;
 

@@ -8,6 +8,9 @@ INSERT INTO lookup (
 -- name: GetLookupById :one
 SELECT * FROM lookup WHERE id = ? LIMIT 1;
 
+-- name: GetLookupByIdForUpdate :one
+SELECT * FROM lookup WHERE id = ? LIMIT 1 FOR UPDATE;
+
 -- name: ListLookup :many
 SELECT * FROM lookup ORDER BY id;
 

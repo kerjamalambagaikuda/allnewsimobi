@@ -58,6 +58,23 @@ func (q *Queries) GetStatusById(ctx context.Context, id int64) (Status, error) {
 	return i, err
 }
 
+const getStatusByIdForUpdate = `-- name: GetStatusByIdForUpdate :one
+SELECT id, type, code, name, description FROM status WHERE id = ? LIMIT 1 FOR UPDATE
+`
+
+func (q *Queries) GetStatusByIdForUpdate(ctx context.Context, id int64) (Status, error) {
+	row := q.db.QueryRowContext(ctx, getStatusByIdForUpdate, id)
+	var i Status
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Code,
+		&i.Name,
+		&i.Description,
+	)
+	return i, err
+}
+
 const listStatus = `-- name: ListStatus :many
 SELECT id, type, code, name, description FROM status ORDER BY id
 `
@@ -68,7 +85,7 @@ func (q *Queries) ListStatus(ctx context.Context) ([]Status, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Status
+	items := []Status{}
 	for rows.Next() {
 		var i Status
 		if err := rows.Scan(

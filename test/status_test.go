@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"testing"
 
 	sqlc "github.com/kerjamalambagaikuda/allnewsimobi/db/sqlc"
@@ -32,8 +33,17 @@ func createRandomStatus(t *testing.T) int64 {
 }
 
 func TestSelectStatusById(t *testing.T) {
-	statusID := createRandomStatus(t)
-	status, err := testQueries.GetStatusById(context.Background(), statusID)
+	store := sqlc.NewStore(testDB)
+
+	// statusID := createRandomStatus(t)
+
+	// Cara tanpa menggunakan database transaction
+	// status, err := testQueries.GetStatusById(context.Background(), statusID);
+
+	// Cara dengan menggunakan database transaction
+	status, err := store.GetStatusById(context.Background(), 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, status)
+
+	fmt.Println(status)
 }

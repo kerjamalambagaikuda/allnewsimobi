@@ -101,6 +101,37 @@ func (q *Queries) GetCustomerById(ctx context.Context, id int64) (Customer, erro
 	return i, err
 }
 
+const getCustomerByIdForUpdate = `-- name: GetCustomerByIdForUpdate :one
+SELECT id, cif_code, level, type, title, full_name, mothers_maiden, gender, birth_date, email, status, created_date, created_by, last_updated_date, last_updated_by, company_code, employers_code, profile_version, cif_code_nkyc FROM customer WHERE id = ? LIMIT 1 FOR UPDATE
+`
+
+func (q *Queries) GetCustomerByIdForUpdate(ctx context.Context, id int64) (Customer, error) {
+	row := q.db.QueryRowContext(ctx, getCustomerByIdForUpdate, id)
+	var i Customer
+	err := row.Scan(
+		&i.ID,
+		&i.CifCode,
+		&i.Level,
+		&i.Type,
+		&i.Title,
+		&i.FullName,
+		&i.MothersMaiden,
+		&i.Gender,
+		&i.BirthDate,
+		&i.Email,
+		&i.Status,
+		&i.CreatedDate,
+		&i.CreatedBy,
+		&i.LastUpdatedDate,
+		&i.LastUpdatedBy,
+		&i.CompanyCode,
+		&i.EmployersCode,
+		&i.ProfileVersion,
+		&i.CifCodeNkyc,
+	)
+	return i, err
+}
+
 const listCustomer = `-- name: ListCustomer :many
 SELECT id, cif_code, level, type, title, full_name, mothers_maiden, gender, birth_date, email, status, created_date, created_by, last_updated_date, last_updated_by, company_code, employers_code, profile_version, cif_code_nkyc FROM customer ORDER BY id
 `
@@ -111,7 +142,7 @@ func (q *Queries) ListCustomer(ctx context.Context) ([]Customer, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Customer
+	items := []Customer{}
 	for rows.Next() {
 		var i Customer
 		if err := rows.Scan(
