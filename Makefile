@@ -28,6 +28,10 @@ ifeq ($(RUN_ARGS), migrate-fresh)
 	migrate -path db/migration -database "${dburl}" -verbose up
 endif
 
+ifeq ($(RUN_ARGS), generate-mock)
+	mockgen -package mockdb -destination db/mock/store.go github.com/kerjamalambagaikuda/allnewsimobi/db/sqlc Store
+endif
+
 # Sql Function
 ifeq (sqlc,$(firstword $(MAKECMDGOALS)))
   RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
